@@ -24,27 +24,25 @@ npm install
 npm run build
 ```
 
-This produces a `dist/` folder with the static files.
+This produces a `docs/` folder with the static files.
 
 ### Deploy to GitHub Pages
 
-1. Create a new GitHub repository (e.g., `image-manager-addin`). It can be private.
+1. Create a new GitHub repository (e.g., `image-manager-addin`).
 
-2. Push the contents of `dist/` to the `gh-pages` branch:
+2. Push the project (including `docs/`) to GitHub:
 
    ```powershell
-   cd dist
    git init
-   git checkout -b gh-pages
    git add -A
-   git commit -m "Deploy add-in"
+   git commit -m "Initial commit"
    git remote add origin https://github.com/YOUR_USERNAME/image-manager-addin.git
-   git push -u origin gh-pages
+   git push -u origin master
    ```
 
 3. In your GitHub repo, go to **Settings → Pages**:
    - Source: **Deploy from a branch**
-   - Branch: **gh-pages** / **(root)**
+   - Branch: **master** / **docs**
    - Click **Save**
 
 4. Wait 1–2 minutes. Your add-in is now live at:
@@ -117,8 +115,7 @@ After code changes, rebuild and redeploy:
 
 ```powershell
 npm run build
-cd dist
-git add -A
+git add docs
 git commit -m "Update add-in"
 git push
 ```

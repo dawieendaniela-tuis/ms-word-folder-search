@@ -21,22 +21,15 @@ dev:
 dev-https:
     $env:PATH = "{{node_path}};$env:PATH"; npx vite --host --https
 
-# Production build to dist/
+# Production build to docs/
 build:
     $env:PATH = "{{node_path}};$env:PATH"; npx vite build
 
-# Build and deploy to GitHub Pages
+# Build and deploy to GitHub Pages (build, commit docs/, push master)
 deploy: build
-    Push-Location dist; \
-    if (-not (Test-Path ".git")) { \
-        git init; \
-        git checkout -b gh-pages; \
-        git remote add origin (git -C .. remote get-url origin 2>$null) \
-    }; \
-    git add -A; \
+    git add .
     git commit -m "Deploy add-in"; \
-    git push -u origin gh-pages --force; \
-    Pop-Location; \
+    git push; \
     Write-Host "Deployed to GitHub Pages" -ForegroundColor Green
 
 # Copy manifest to the Office sideload folder (Windows)
@@ -60,8 +53,8 @@ setup: install build sideload
 
 # Clean build artifacts
 clean:
-    if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }; \
-    Write-Host "Cleaned dist/" -ForegroundColor Green
+    if (Test-Path "docs") { Remove-Item -Recurse -Force "docs" }; \
+    Write-Host "Cleaned docs/" -ForegroundColor Green
 
 # Clean everything including node_modules
 clean-all: clean
@@ -78,7 +71,7 @@ help:
     Write-Host "" ; \
     Write-Host "  Production:" -ForegroundColor Yellow; \
     Write-Host "    just setup        — First-time: install, build, sideload manifest" -ForegroundColor White; \
-    Write-Host "    just build        — Production build to dist/" -ForegroundColor White; \
+    Write-Host "    just build        — Production build to docs/" -ForegroundColor White; \
     Write-Host "    just deploy       — Build + push to GitHub Pages" -ForegroundColor White; \
     Write-Host "    just sideload     — Copy manifest to Word sideload folder (Windows)" -ForegroundColor White; \
     Write-Host "    just sideload-mac — Copy manifest to Word sideload folder (Mac)" -ForegroundColor White; \
@@ -90,6 +83,6 @@ help:
     Write-Host "    just certs        — Generate HTTPS dev certificates" -ForegroundColor White; \
     Write-Host "" ; \
     Write-Host "  Maintenance:" -ForegroundColor Yellow; \
-    Write-Host "    just clean        — Remove dist/" -ForegroundColor White; \
-    Write-Host "    just clean-all    — Remove dist/ + node_modules/" -ForegroundColor White; \
+    Write-Host "    just clean        — Remove docs/" -ForegroundColor White; \
+    Write-Host "    just clean-all    — Remove docs/ + node_modules/" -ForegroundColor White; \
     Write-Host "    just rebuild      — Clean + build" -ForegroundColor White

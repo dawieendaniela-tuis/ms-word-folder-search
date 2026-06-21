@@ -11,75 +11,70 @@ function getWidthPoints(widthSetting, pageWidth) {
   }
 }
 
+const PAGE_WIDTH = 468; // US Letter width in points minus default 1" margins
+
+function resizeImage(image, targetWidth) {
+  const aspectRatio = image.height / image.width;
+  image.width = targetWidth;
+  image.height = targetWidth * aspectRatio;
+}
+
 export async function insertImage(entry, widthSetting) {
   const base64 = await getImageBase64(entry);
   if (!base64) return;
 
+  const targetWidth = getWidthPoints(widthSetting, PAGE_WIDTH);
+
   await Word.run(async (context) => {
-    const range = context.document.getSelection();
-    const image = range.insertInlinePictureFromBase64(base64, Word.InsertLocation.replace);
+    const selection = context.document.getSelection();
+    const image = selection.insertInlinePictureFromBase64(base64, Word.InsertLocation.end);
 
-    if (widthSetting !== 'original') {
-      const body = context.document.body;
-      const sections = context.document.sections;
-      sections.load('items');
+    if (targetWidth) {
+      image.load('width,height');
       await context.sync();
-
-      const section = sections.items[0];
-      section.load('pageSetup');
-      await context.sync();
-
-      const pageSetup = section.getNext ? section : sections.items[0];
-      const pageWidth = 468; // default US Letter width in points minus margins
-
-      const targetWidth = getWidthPoints(widthSetting, pageWidth);
-      if (targetWidth) {
-        image.load('width,height');
-        await context.sync();
-        const aspectRatio = image.height / image.width;
-        image.width = targetWidth;
-        image.height = targetWidth * aspectRatio;
-      }
+      resizeImage(image, targetWidth);
     }
 
+    image.getRange(Word.RangeLocation.after).select();
     await context.sync();
   });
 }
 
-export async function insertAllImages(entries, widthSetting) {
+export async function insertAllImages(entries, widthSetting, onProgress) {
   if (!entries || entries.length === 0) return;
 
-  await Word.run(async (context) => {
-    let range = context.document.getSelection();
+  const targetWidth = getWidthPoints(widthSetting, PAGE_WIDTH);
+  const total = entries.length;
 
-    const pageWidth = 468;
+  for (let i = 0; i < total; i++) {
+    const entry = entries[i];
+    const base64 = await getImageBase64(entry);
 
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i];
-      const base64 = await getImageBase64(entry);
-      if (!base64) continue;
+    if (base64) {
+      const isLast = i === total - 1;
+      await Word.run(async (context) => {
+        const selection = context.document.getSelection();
+        const image = selection.insertInlinePictureFromBase64(base64, Word.InsertLocation.end);
 
-      const image = range.insertInlinePictureFromBase64(base64, Word.InsertLocation.after);
-
-      if (widthSetting !== 'original') {
-        const targetWidth = getWidthPoints(widthSetting, pageWidth);
         if (targetWidth) {
           image.load('width,height');
           await context.sync();
-          const aspectRatio = image.height / image.width;
-          image.width = targetWidth;
-          image.height = targetWidth * aspectRatio;
+          resizeImage(image, targetWidth);
         }
-      }
 
-      await context.sync();
+        if (isLast) {
+          image.getRange(Word.RangeLocation.after).select();
+        } else {
+          const paragraph = image
+            .getRange(Word.RangeLocation.after)
+            .insertParagraph('', Word.InsertLocation.after);
+          paragraph.getRange(Word.RangeLocation.start).select();
+        }
 
-      if (i < entries.length - 1) {
-        range = image.getRange(Word.RangeLocation.after);
-        range.insertBreak(Word.BreakType.line, Word.InsertLocation.after);
-        range = range.getRange(Word.RangeLocation.after);
         await context.sync();
-      }
+      });
     }
-  });
+
+    if (onProgress) onProgress(i + 1, total);
+  }
 }

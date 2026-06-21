@@ -1,6 +1,6 @@
 <script>
   import { selectedImage, imageWidth, reorderImagesInFolder } from '../stores/appStore.js';
-  import { insertImage, insertAllImages } from '../utils/wordApi.js';
+  import { insertSingle, insertFolder } from '../utils/insert.js';
   import TreeNode from './TreeNode.svelte';
 
   let { node, depth = 0 } = $props();
@@ -22,12 +22,12 @@
 
   async function handleInsertImage(e, imgNode) {
     e.stopPropagation();
-    await insertImage(imgNode, $imageWidth);
+    await insertSingle(imgNode, $imageWidth);
   }
 
   async function handleInsertAll(e) {
     e.stopPropagation();
-    await insertAllImages(images, $imageWidth);
+    await insertFolder(images, $imageWidth);
   }
 
   function handleDragStart(e, index) {
@@ -101,6 +101,7 @@
             class:dragging={draggingIndex === i}
             style="padding-left: {(depth + 1) * 16}px"
             onclick={() => selectImage(imgNode)}
+            ondblclick={() => insertSingle(imgNode, $imageWidth)}
             role="button"
             tabindex="0"
             onkeydown={(e) => e.key === 'Enter' && selectImage(imgNode)}

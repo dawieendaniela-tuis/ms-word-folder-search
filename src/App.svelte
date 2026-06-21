@@ -2,10 +2,12 @@
   import Toolbar from './lib/components/Toolbar.svelte';
   import TreeView from './lib/components/TreeView.svelte';
   import ImagePreview from './lib/components/ImagePreview.svelte';
+  import InsertProgress from './lib/components/InsertProgress.svelte';
 </script>
 
 <div class="app">
   <Toolbar />
+  <InsertProgress />
   <TreeView />
   <ImagePreview />
 </div>

@@ -6,6 +6,7 @@ export const imageWidth = writable('100%');
 export const dirHandle = writable(null);
 export const isLoading = writable(false);
 export const errorMessage = writable('');
+export const insertProgress = writable(null);
 
 export const widthOptions = [
   { label: '25% page width', value: '25%' },

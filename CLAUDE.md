@@ -128,10 +128,10 @@ Located in `src/lib/utils/wordApi.js`.
 The add-in is deployed as static files on **GitHub Pages**. No server to run.
 
 ```powershell
-npm run build     # Production build to dist/
+npm run build     # Production build to docs/
 ```
 
-Then push `dist/` to the `gh-pages` branch of a GitHub repo. Update `manifest.xml` URLs to point to `https://YOUR_USERNAME.github.io/REPO_NAME`. Sideload the manifest into Word once. See `INSTALLATION.md` for full steps.
+The `docs/` folder is committed to the repo. GitHub Pages serves from the `docs/` folder on the `master` branch. Update `manifest.xml` URLs to point to `https://YOUR_USERNAME.github.io/REPO_NAME`. Sideload the manifest into Word once. See `INSTALLATION.md` for full steps.
 
 ## Development
 

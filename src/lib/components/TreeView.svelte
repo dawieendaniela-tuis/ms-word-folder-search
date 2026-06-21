@@ -1,7 +1,7 @@
 <script>
   import TreeNode from './TreeNode.svelte';
   import { tree, selectedImage, imageWidth, reorderImagesInFolder } from '../stores/appStore.js';
-  import { insertImage } from '../utils/wordApi.js';
+  import { insertSingle } from '../utils/insert.js';
 
   let dragOverIndex = $state(-1);
   let draggingIndex = $state(-1);
@@ -15,7 +15,7 @@
 
   async function handleInsertImage(e, imgNode) {
     e.stopPropagation();
-    await insertImage(imgNode, $imageWidth);
+    await insertSingle(imgNode, $imageWidth);
   }
 
   function handleDragStart(e, index) {
@@ -73,6 +73,7 @@
         class:drag-over={dragOverIndex === i}
         class:dragging={draggingIndex === i}
         onclick={() => selectImage(imgNode)}
+        ondblclick={() => insertSingle(imgNode, $imageWidth)}
         role="button"
         tabindex="0"
         onkeydown={(e) => e.key === 'Enter' && selectImage(imgNode)}

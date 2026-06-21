@@ -1,7 +1,7 @@
 <script>
   import { selectedImage, imageWidth } from '../stores/appStore.js';
   import { getImageDataUrl } from '../utils/filesystem.js';
-  import { insertImage } from '../utils/wordApi.js';
+  import { insertSingle } from '../utils/insert.js';
 
   let previewUrl = $state(null);
   let loading = $state(false);
@@ -31,7 +31,7 @@
 
   async function handleInsert() {
     if ($selectedImage) {
-      await insertImage($selectedImage, $imageWidth);
+      await insertSingle($selectedImage, $imageWidth);
     }
   }
 </script>

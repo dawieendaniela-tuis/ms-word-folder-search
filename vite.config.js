@@ -23,7 +23,7 @@ export default defineConfig({
   plugins: [svelte()],
   base: './',
   build: {
-    outDir: 'dist',
+    outDir: 'docs',
     rollupOptions: {
       input: {
         taskpane: 'taskpane.html',

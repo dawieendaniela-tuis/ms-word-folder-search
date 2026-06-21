@@ -179,10 +179,10 @@ src/
 npm run build
 ```
 
-Output goes to `dist/`. To test the production build locally:
+Output goes to `docs/`. To test the production build locally:
 
 ```powershell
 npm run preview
 ```
 
-This serves `dist/` at `https://localhost:4173` (or similar). Update the manifest URLs if testing against the preview server.
+This serves `docs/` at `https://localhost:4173` (or similar). Update the manifest URLs if testing against the preview server.
