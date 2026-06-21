@@ -1,0 +1,23 @@
+{
+  "name": "ms-word-image-manager",
+  "version": "1.0.0",
+  "description": "Word add-in for browsing and inserting images from a local folder",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "dev:https": "vite --https",
+    "build": "vite build",
+    "preview": "vite preview",
+    "certs": "office-addin-dev-certs install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "office-addin-dev-certs": "^2.0.9",
+    "svelte": "^5.56.3",
+    "vite": "^8.0.16"
+  }
+}
