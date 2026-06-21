@@ -40,7 +40,7 @@ export async function insertImage(entry, widthSetting) {
       resizeImage(image, targetWidth);
     }
 
-    image.getRange(Word.RangeLocation.after).select();
+    image.getRange(Word.RangeLocation.end).select();
     await context.sync();
     console.log('[wordApi] inserted', entry.name);
   });
@@ -71,10 +71,10 @@ export async function insertAllImages(entries, widthSetting, onProgress) {
         }
 
         if (isLast) {
-          image.getRange(Word.RangeLocation.after).select();
+          image.getRange(Word.RangeLocation.end).select();
         } else {
           const paragraph = image
-            .getRange(Word.RangeLocation.after)
+            .getRange(Word.RangeLocation.end)
             .insertParagraph('', Word.InsertLocation.after);
           paragraph.getRange(Word.RangeLocation.start).select();
         }
