@@ -20,14 +20,19 @@ function resizeImage(image, targetWidth) {
 }
 
 export async function insertImage(entry, widthSetting) {
+  console.log('[wordApi] insertImage:', entry.name, 'width:', widthSetting);
   const base64 = await getImageBase64(entry);
-  if (!base64) return;
+  if (!base64) {
+    console.warn('[wordApi] no base64 for', entry.name);
+    return;
+  }
+  console.log('[wordApi] base64 length:', base64.length);
 
   const targetWidth = getWidthPoints(widthSetting, PAGE_WIDTH);
 
   await Word.run(async (context) => {
-    const selection = context.document.getSelection();
-    const image = selection.insertInlinePictureFromBase64(base64, Word.InsertLocation.end);
+    const range = context.document.getSelection();
+    const image = range.insertInlinePictureFromBase64(base64, Word.InsertLocation.replace);
 
     if (targetWidth) {
       image.load('width,height');
@@ -37,6 +42,7 @@ export async function insertImage(entry, widthSetting) {
 
     image.getRange(Word.RangeLocation.after).select();
     await context.sync();
+    console.log('[wordApi] inserted', entry.name);
   });
 }
 
@@ -45,16 +51,18 @@ export async function insertAllImages(entries, widthSetting, onProgress) {
 
   const targetWidth = getWidthPoints(widthSetting, PAGE_WIDTH);
   const total = entries.length;
+  console.log('[wordApi] insertAllImages: count =', total, 'width:', widthSetting);
 
   for (let i = 0; i < total; i++) {
     const entry = entries[i];
+    console.log(`[wordApi] [${i + 1}/${total}] reading`, entry.name);
     const base64 = await getImageBase64(entry);
 
     if (base64) {
       const isLast = i === total - 1;
       await Word.run(async (context) => {
-        const selection = context.document.getSelection();
-        const image = selection.insertInlinePictureFromBase64(base64, Word.InsertLocation.end);
+        const range = context.document.getSelection();
+        const image = range.insertInlinePictureFromBase64(base64, Word.InsertLocation.replace);
 
         if (targetWidth) {
           image.load('width,height');
@@ -72,9 +80,14 @@ export async function insertAllImages(entries, widthSetting, onProgress) {
         }
 
         await context.sync();
+        console.log(`[wordApi] [${i + 1}/${total}] inserted`, entry.name);
       });
+    } else {
+      console.warn(`[wordApi] [${i + 1}/${total}] no base64 for`, entry.name);
     }
 
     if (onProgress) onProgress(i + 1, total);
   }
+
+  console.log('[wordApi] insertAllImages done');
 }
